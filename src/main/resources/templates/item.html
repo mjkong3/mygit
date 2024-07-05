@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Shop Homepage - Start Bootstrap Template</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="/css/item.css" rel="stylesheet" />
+    <!-- jQuery 추가 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function() {
+
+              calcTotalPrice();
+
+              $("#count").change(function() {
+                  calcTotalPrice();
+              });
+          });
+
+          async function calcTotalPrice(){
+              var count = $("#count").val();
+              var price = $("#pr").val();
+              var totalPrice = count * price;
+              $("#totalPrice").html(totalPrice + '원');
+          }
+
+          async function addCart() {
+              let url = "/cart";
+              let paramData = {
+                  itemNum: $("#itemNum").val(),
+                  count: $("#count").val()
+              };
+
+              let param = JSON.stringify(paramData);
+
+              try {
+                  const response = await fetch(url, {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                      body: param,
+                      cache: 'no-cache'
+                  });
+
+                  if (!response.ok) {
+                      const errorText = await response.text();
+                      throw new Error(errorText);
+                  }
+
+                  const result = await response.json();
+                  console.log("Response JSON : ", result);
+
+                  alert("장바구니에 상품이 추가되었습니다.");
+                  location.href = "redirect:/";
+
+              } catch (error) {
+                  alert(error.message);
+              }
+          }
+
+    </script>
+</th:block>
+<div th:replace="fragments/header :: header"></div>
+
+<div th:fragment="content">
+<div class="container">
+
+    <input type="hidden" id="itemNum" th:value="${item.itemNum}" />
+
+    <div class="img"><img th:src="${item.itemImage}" th:alt="${item.itemName}" /></div>
+
+    <div class="context">
+        <h3 class="cate" th:text="${item.categoryName}"></h3>
+        <h3 class="title" th:text="${item.itemName}"></h3>
+
+        <input type="hidden" th:value="${item.itemPrice}" id="pr" name="pr">
+        <input type="hidden" th:value="${item.itemNum}" id="item">
+
+        <h3 class="price" th:text="${item.itemPrice} + 원"></h3>
+        <div class="basket">
+            <p th:text="${item.itemInfo}"></p>
+            <p class="price2" th:text="${item.itemPrice} + 원"></p>
+        </div>
+        <div class="line"></div>
+
+        <input type="number" name="count" id="count" class="count" value="1" min="1">
+
+        <div class="account">
+            <p>주문금액</p>
+            <p name="totalPrice" id="totalPrice"></p>
+        </div>
+
+        <button type="button" class="btn" id="addToCartBtn" onclick="addCart()">장바구니에 추가</button>
+    </div>
+</div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<script src="/js/scripts.js"></script>
+
+
+
+</body>
+</html>

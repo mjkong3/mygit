@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.pet.item.mapper.ItemMapper">
+    <!--상품 추가-->
+    <insert id="insertItem" parameterType="itemDto" useGeneratedKeys="true" keyProperty="itemNum" keyColumn="item_num">
+        INSERT INTO item(category_name, item_name, item_price, item_cnt, item_image, item_info)
+        VALUES (#{categoryName}, #{itemName}, #{itemPrice}, #{itemCnt}, #{itemImage}, #{itemInfo})
+    </insert>
+
+    <!--index 상품 목록-->
+    <select id="indexItem" resultType="itemDto">
+        SELECT *
+        FROM item
+        ORDER BY item_num DESC
+        LIMIT 3
+    </select>
+
+
+    <!--전체 목록 (페이징 처리)-->
+    <select id="itemAll" parameterType="map" resultType="itemDto">
+        SELECT item_num, category_name, item_name, item_price, item_cnt, item_image, item_info
+        FROM item
+        ORDER BY item_num DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <!--상품 총 개수 (페이징 처리)-->
+    <select id="itemAllCount" resultType="int">
+        SELECT count(*)
+        FROM item
+    </select>
+
+    <select id="selectItem" resultType="itemDto" parameterType="Long">
+        SELECT item_num, category_name, item_name, item_price, item_cnt, item_image, item_info
+        FROM item
+        WHERE item_num=#{itemNum}
+    </select>
+
+    <update id="updateCnt" parameterType="itemDto">
+        UPDATE item
+        set item_cnt = #{itemCnt}
+        WHERE item_num = #{itemNum}
+    </update>
+
+
+    <!-- 카테고리별 상품 목록 (페이징 처리) -->
+    <select id="selectCate" parameterType="map" resultType="itemDto">
+        SELECT *
+        FROM item
+        WHERE category_name = #{categoryName}
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="selectCateCount" parameterType="String" resultType="int">
+        SELECT count(*)
+        FROM item
+        WHERE category_name = #{categoryName}
+    </select>
+
+    <!--검색어(페이징)-->
+    <select id="searchItem" parameterType="map" resultType="itemDto">
+        SELECT item_num, category_name, item_name, item_price, item_cnt, item_image, item_info
+        FROM item
+        WHERE item_name LIKE CONCAT('%',#{searchWord},'%')
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="searchItemCount" parameterType="string" resultType="int">
+        SELECT count(*)
+        FROM item
+        WHERE item_name LIKE CONCAT('%',#{searchWord},'%')
+    </select>
+</mapper>

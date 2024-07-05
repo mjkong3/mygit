@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <th:block layout:fragment="script">
+        <script th:inline="javascript">
+            $(document).ready(function(){
+                let errorMessage=/*[[${errorMessage}]]*/ "";
+                if (errorMessage != null) {
+                    alert(errorMessage);
+                }
+            })
+
+            function deleteRV(reviewNum) {
+                console.log(reviewNum);
+                if (confirm("정말로 삭제하시겠습니까?")) {
+                    window.location.href = '/review/delete/' + reviewNum;
+                }
+            }
+
+            $(document).ready(function(){
+                console.log("jQuery is loaded and ready!");
+            });
+        </script>
+    </th:block>
+
+    <th:block layout:fragment="css">
+        <style>
+            body {
+               font-family: Arial, sans-serif;
+               margin: 0;
+               padding: 0;
+               background-color: #f4f4f4;
+           }
+
+           h2 {
+               color: #333;
+               text-align: center;
+               margin-top: 40px; /* 제목의 빈칸을 더 크게 조정 */
+               margin-bottom: 30px; /* 아래 여백 추가 */
+           }
+
+           .noticeDtl {
+               width: 60%;
+               margin: 20px auto;
+               padding: 20px;
+               background-color: #ffffff; /* 흰색 배경으로 변경 */
+               border-radius: 8px;
+               box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+           }
+
+           .noticeDtl table {
+               margin: 0 auto;
+           }
+
+           .noticeDtl td {
+               padding: 10px;
+               border: 1px solid #ddd;
+           }
+
+           .noticeDtl td:first-child {
+               font-weight: bold;
+               background-color: #f2f2f2;
+           }
+
+           .noticeDtl p {
+               font-size: 16px;
+               line-height: 1.6;
+           }
+
+           .noticeDtl button {
+               width: 100%;
+               background-color: lightblue; /* 수정 버튼 색상 변경 */
+               color: white;
+               padding: 12px 24px; /* 크기를 조금 더 크게 조정 */
+               border: none;
+               border-radius: 4px;
+               cursor: pointer;
+               font-size: 16px;
+               margin-top: 20px;
+               margin-left: 10px;
+               transition: background-color 0.3s ease; /* 호버 시 색상 변화를 부드럽게 설정 */
+           }
+
+           .noticeDtl button:hover {
+               background-color: skyblue; /* hover 시 skyblue 색상으로 변경 */
+           }
+
+           /*footer {
+               background-color: #343a40;
+               color: #fff;
+               padding: 80px 0;
+               text-align: center;
+               position: fixed;
+               bottom: 0;
+               width: 100%;
+           }*/
+
+           /* 공지내용 입력란 크기 및 글자수 설정 */
+           #noticeContent {
+               width: 100%;
+               height: 300px; /* 입력란 높이를 조정합니다. */
+               padding: 10px;
+               border: 1px solid #ddd;
+               border-radius: 4px;
+               font-size: 16px;
+               line-height: 1.6;
+           }
+
+            /* 수정 버튼 스타일 */
+       button[type="submit"] {
+           background-color: lightblue;
+           color: white;
+           padding: 12px 24px;
+           border: none;
+           border-radius: 4px;
+           cursor: pointer;
+           font-size: 16px;
+           transition: background-color 0.3s ease;
+       }
+
+       /* 수정 버튼 호버 스타일 */
+       button[type="submit"]:hover {
+           background-color: skyblue;
+       }
+
+        </style>
+    </th:block>
+
+
+
+    <title>오마이댕 공지작성</title>
+
+</head>
+
+<div th:replace="fragments/header :: header"></div>
+
+<div th:fragment="content">
+    <center>
+        <input type="hidden" th:value="${review.reviewNum}" id="noticeNum" name="reviewNum">
+
+        <table class="noticeDtl">
+            <h2>리뷰 상세보기</h2>
+
+            <tr>
+                <td>제품</td>
+                <td><p name="itemName" th:text="${review.itemName}" ></td>
+            </tr>
+            <tr>
+                <td>제목</td>
+                <td><p name="reviewTitle" th:text="${review.reviewTitle}" ></td>
+            </tr>
+            <tr>
+                <td>작성자</td>
+                <td><p name="custName" th:text="${review.custName}"></p></td>
+            </tr>
+            <tr>
+                <td>게시날짜</td>
+                <td><p name="reviewDate" th:utext="${#temporals.format(review.reviewDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></p></td>
+            </tr>
+            <!-- 이미지가 있으면 나타내고 없으면 안나타나게 -->
+            <!--<tr th:if="not ${review.reviewImg}.isEmpty">-->
+            <tr>
+                <td >이미지</td>
+                <td><img name="reviewImg" th:src="${review.reviewImg}"/></td>
+            </tr>
+            <tr>
+                <td>리뷰 내용</td>
+                <td>
+                    <p name="reviewContent" style="width: 100%; height: 150px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; line-height: 1.6;" th:text="${review.reviewContent}"></p>
+                </td>
+            </tr>
+            <tr>
+
+            </tr>
+
+
+        </table>
+
+        <!-- 로그인한 사용자가 리뷰 작성자와 동일할 경우에만 이 부분을 노출 -->
+        <button type="submit"
+                th:if="${customer != null} and (${review.custNum} == ${customer.custNum} or
+                 ${#authorization.expression('hasAnyAuthority(''ROLE_ADMIN'')')})"
+                th:onclick="'deleteRV(' + ${review.reviewNum} + ')'">
+            삭제
+        </button>
+
+
+        <button onclick="location.href='/review'" type="submit">리뷰목록</button>
+
+    </center>
+    <br><br><br>
+
+
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<script src="js/scripts.js"></script>
+
+</html>

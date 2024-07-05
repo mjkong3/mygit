@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.pet.cart.mapper.CartMapper">
+
+    <!-- 장바구니 추가 -->
+    <insert id="insertCart" parameterType="Long">
+        INSERT INTO cart (cust_num)
+        VALUES(#{custNum})
+    </insert>
+
+    <!-- 장바구니 상품 추가 -->
+    <insert id="insertItem" parameterType="cartItemDto">
+        INSERT INTO cart_item (cart_num, item_num, count)
+        VALUES( #{cartNum}, #{itemNum}, #{count} )
+    </insert>
+
+    <!-- 장바구니 카트 번호 확인 -->
+    <select id="findCartNum" parameterType="Long" resultType="cartDto">
+        SELECT *
+        FROM cart
+        WHERE cust_num = #{custNum}
+    </select>
+
+    <!-- 장바구니 수량 변경 위해 확인 -->
+    <select id="findCartItem" parameterType="Long" resultType="cartItemDto">
+        SELECT *
+        FROM cart c JOIN cart_item ci
+        ON c.cart_num = ci.cart_num
+        WHERE ci.cart_item_num = #{cartItemNum}
+    </select>
+
+    <!-- 장바구니 목록 확인 -->
+    <select id="cartList" parameterType="map" resultType="cartItemDto">
+        SELECT *
+        FROM cart_item
+        WHERE cart_num = #{cartNum} AND item_num = #{itemNum}
+    </select>
+
+    <!-- 장바구니 상품 조회 -->
+    <select id="listAll" parameterType="Long" resultType="cartDetailDto">
+        SELECT cart_item_num, ci.cart_num, item_name, item_price, ci.count, item_image
+        FROM cart_item ci JOIN item i
+        ON ci.item_num = i.item_num JOIN cart c
+        ON ci.cart_num = c.cart_num
+        WHERE c.cart_num = #{cartNum}
+    </select>
+
+    <!-- cart_item_num 에 대한 정보 -->
+    <select id="selectItem" parameterType="Long" resultType="cartDetailDto">
+        SELECT cart_item_num, ci.cart_num, item_name, item_price, ci.count, item_image, ci.item_num, cu.cust_name
+        FROM cart_item ci JOIN item i
+        ON ci.item_num = i.item_num JOIN cart c
+        ON ci.cart_num = c.cart_num JOIN customer cu
+        ON cu.cust_num = c.cust_num
+        WHERE ci.cart_item_num = #{cartItemNum}
+    </select>
+
+    <!-- 장바구니 상품 수량 변경 -->
+    <update id="updateCount" parameterType="map">
+        UPDATE cart_item
+        set count=#{count}
+        WHERE cart_item_num = #{cartItemNum}
+    </update>
+
+    <!-- 장바구니 상품 삭제 -->
+    <delete id="deleteItem" parameterType="Long">
+        DELETE FROM cart_item
+        WHERE cart_item_num = #{cartItemNum}
+    </delete>
+</mapper>

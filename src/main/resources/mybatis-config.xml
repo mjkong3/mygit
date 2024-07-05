@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+    <typeAliases>
+        <typeAlias alias="adminItemDto" type="com.example.admin.dto.AdminItemDto"/>
+        <typeAlias alias="adminCustomerDto" type="com.example.admin.dto.AdminCustomerDto"/>
+        <typeAlias alias="adminOrderDto" type="com.example.admin.dto.AdminOrderDto"/>
+        <typeAlias alias="adminCategoryDto" type="com.example.admin.dto.AdminCategoryDto"/>
+
+        <typeAlias alias="customerDto" type="com.example.pet.customer.dto.CustomerDto"/>
+        <typeAlias alias="categoryDto" type="com.example.pet.category.dto.CategoryDto"/>
+        <typeAlias alias="itemDto" type="com.example.pet.item.dto.ItemDto"/>
+        <typeAlias alias="noticeDto" type="com.example.pet.notice.dto.NoticeDto"/>
+        <typeAlias alias="reviewDto" type="com.example.pet.review.dto.ReviewDto" />
+        <typeAlias alias="orderListDto" type="com.example.pet.order.dto.OrderListDto" />
+        <typeAlias alias="cartDto" type="com.example.pet.cart.dto.CartDto" />
+        <typeAlias alias="cartDetailDto" type="com.example.pet.cart.dto.CartDetailDto" />
+        <typeAlias alias="cartItemDto" type="com.example.pet.cart.dto.CartItemDto" />
+        <typeAlias alias="orderDto" type="com.example.pet.order.dto.OrderDto"/>
+        <typeAlias alias="orderDetailDto" type="com.example.pet.order.dto.OrderDetailDto"/>
+        <typeAlias alias="orderHistDto" type="com.example.pet.order.dto.OrderHistDto"/>
+        <typeAlias alias="myPageDto" type="com.example.pet.myPage.dto.MyPageDto"/>
+        <typeAlias alias="customerTotalPriceDto" type="com.example.pet.customer.dto.CustomerTotalPriceDto"/>
+    </typeAliases>
+</configuration>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.pet.myPage.mapper.MyPageMapper">
+
+<!--    <select id="selectMyPage" parameterType="Long" resultType="myPageDto">
+        SELECT o.order_date, i.item_name, i.item_image, od.item_cnt, od.price, o.address, od.order_status, od.order_detail_num, o.order_num
+        FROM `order` o,
+        JOIN customer c ON o.cust_num = c.cust_num
+        JOIN orders_detail od ON o.order_num = od.order_num
+        JOIN item i ON od.item_num = i.item_num
+        WHERE o.order_num = #{orderNum}
+    </select>-->
+
+    <select id="selectMyPage" parameterType="map" resultType="myPageDto">
+        SELECT o.order_num, od.order_detail_num, i.item_name, o.order_date, i.item_image, od.item_cnt, od.price, o.address, od.order_status
+        FROM `order` o
+        JOIN customer c ON o.cust_num = c.cust_num
+        JOIN orders_detail od ON o.order_num = od.order_num
+        JOIN item i ON od.item_num = i.item_num
+        WHERE c.cust_num = #{custNum}
+        ORDER BY order_num DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="selectMyPageCount" parameterType="Long" resultType="int">
+        SELECT count(*)
+        FROM `order` o
+        JOIN orders_detail od ON o.order_num = od.order_num
+        WHERE o.cust_num = #{custNum}
+    </select>
+
+    <delete id="deleteOrder" parameterType="Long">
+        DELETE FROM orders_detail
+        WHERE order_detail_num = #{orderDetailNum}
+    </delete>
+
+    <update id="changeStatus" parameterType="map">
+        UPDATE orders_detail
+        SET order_status = #{orderStatus}
+        WHERE order_detail_num = #{orderDetailNum}
+    </update>
+
+    <!-- 마이페이지에서 취소된 상품을 지우기 위해 조회-->
+    <select id="selectCancel" parameterType="map" resultType="orderDetailDto">
+        SELECT *
+        FROM orders_detail
+        WHERE order_detail_num = #{orderDetailNum} and order_status = #{orderStatus}
+    </select>
+
+    <select id="selectRVItem" parameterType="Long" resultType="myPageDto">
+        SELECT o.order_num, od.order_detail_num, i.item_name, o.order_date, i.item_image, od.item_cnt, od.price, o.address, od.order_status
+        FROM `order` o
+        JOIN customer c ON o.cust_num = c.cust_num
+        JOIN orders_detail od ON o.order_num = od.order_num
+        JOIN item i ON od.item_num = i.item_num
+        WHERE c.cust_num = #{custNum} AND od.order_status LIKE 'SEND'
+        ORDER BY order_num DESC
+    </select>
+</mapper>

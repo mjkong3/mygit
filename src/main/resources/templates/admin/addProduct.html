@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>오마이댕 - 관리자페이지 (상품관리)</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="/css/manage/addProduct.css" rel="stylesheet" />
+    </head>
+    <body>
+
+    <div th:replace="fragments/manageHeader :: manageHeader"></div>
+
+    <div class="product">
+        <h2>전체 상품관리</h2>
+        <form class="productSearch" method="get" action="/addProduct">
+            <h4>상품검색</h4>
+            <table class="search">
+                <tr>
+                    <th scope="row">검색어</th>
+                    <td>
+                        <select name="searchField">
+                            <option value="item_name">상품명</option>
+                            <option value="item_num">상품번호</option>
+                            <option value="item_info">상세정보</option>
+                        </select>
+                        <input type="text" name="searchValue" size="30">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">카테고리</th>
+                    <td>
+                        <select name="categoryName" >
+                            <option value="">전체</option>
+                            <option th:each="category : ${category}" th:value="${category.categoryName}" th:text="${category.categoryName}"></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">상품재고</th>
+                    <td>
+                        <input type="text" name="minStock" value="" class="" maxlength="10">
+                        <label for="minStock" class="">개 이상~</label>
+                        <input type="text" name="maxStock" value="" class="" maxlength="10">
+                        <label for="minStock" class="">개 이하</label>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">상품가격</th>
+                    <td>
+                        <input type="text" name="minPrice" value="" class="" maxlength="10">
+                        <label for="minPrice" class="">원 이상~</label>
+                        <input type="text" name="maxPrice" value="" class="" maxlength="10">
+                        <label for="maxPrice" class="">원 이하</label>
+                    </td>
+                </tr>
+            </table>
+            <div class="btn">
+                <input type="submit" value="검색">
+                <input type="button" value="초기화" onclick="window.location.href='/addProduct';">
+            </div>
+        </form>
+        <div>
+            <table class="search_table">
+                <a href="/addProductAdd" class="add">상품추가</a>
+                <thead class="list">
+                    <th scope="col">삭제하기</th>
+                    <th scope="col">상품번호</th>
+                    <th scope="col">카테고리</th>
+                    <th scope="col">상품명</th>
+                    <th scope="col">가격</th>
+                    <th scope="col">재고</th>
+                    <th scope="col">상세정보</th>
+                </thead>
+                <tbody class="list">
+                    <tr th:each="item, iterStat : ${item}">
+                        <td scope="col">
+                            <input type="hidden" name="itemNum" th:value="${item.itemNum}">
+                            <input type="hidden" name="itemName" th:value="${item.itemName}">
+                            <button type="button" class="close" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </td>
+                        <td scope="col" th:text="${item.itemNum}">상품번호</td>
+                        <td scope="col" th:text="${item.categoryName}">카테고리</td>
+                        <td scope="col" th:text="${item.itemName}">상품명</td>
+                        <td scope="col" th:text="${item.itemPrice}+'원'">가격</td>
+                        <td scope="col" th:text="${item.itemCnt}+'개'">재고</td>
+                        <td scope="col" th:text="${item.itemInfo}" width="600">상세정보</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${#lists.isEmpty(item)}" style="color:red;">
+            <p>해당 상품이 없습니다</p>
+        </div>
+        <br>
+
+        <!-- 페이징 네비게이션 -->
+        <div th:if="${not #lists.isEmpty(item)}">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${pageHandler.firstPage} ? 'disabled'">
+                        <a class="page-link" th:href="@{/addProduct(page=${pageHandler.beginPage - 1}, searchField=${searchField}, searchValue=${searchValue}, categoryName=${categoryName}, minStock=${minStock}, maxStock=${maxStock}, minPrice=${minPrice}, maxPrice=${maxPrice})}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <th:block th:each="i : ${#numbers.sequence(pageHandler.beginPage, pageHandler.endPage)}">
+                        <li class="page-item" th:classappend="${pageHandler.page == i} ? 'active'">
+                            <a class="page-link" th:href="@{/addProduct(page=${i},searchField=${searchField}, searchValue=${searchValue}, categoryName=${categoryName}, minStock=${minStock}, maxStock=${maxStock}, minPrice=${minPrice}, maxPrice=${maxPrice})}">[[${i}]]</a>
+                        </li>
+                    </th:block>
+                    <li class="page-item" th:classappend="${pageHandler.lastPage} ? 'disabled'">
+                        <a class="page-link" th:href="@{/addProduct(page=${pageHandler.endPage+1}, searchField=${searchField}, searchValue=${searchValue}, categoryName=${categoryName}, minStock=${minStock}, maxStock=${maxStock}, minPrice=${minPrice}, maxPrice=${maxPrice})}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="js/scripts.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.close').forEach(button => {
+                button.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const itemNum = row.querySelector('input[name="itemNum"]').value;
+                    const itemName = row.querySelector('input[name="itemName"]').value;
+
+                    if (itemNum === null || itemNum === '') {
+                        alert('상품 번호를 가져오지 못했습니다.');
+                        return;
+                    }
+
+                    if (confirm(`정말로 삭제하시겠습니까? (제품명: ${itemName})`)) {
+                        fetch('/deleteItem', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                'itemNum': itemNum
+                            })
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                location.reload();
+                            } else {
+                                alert('삭제 실패');
+                            }
+                        })
+                        .catch(error => {
+                            alert('삭제 중 오류 발생');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+    </body>
+</html>

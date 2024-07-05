@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="오마이댕 관리자페이지" />
+    <meta name="author" content="" />
+    <title>오마이댕 - 관리자페이지</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Bootstrap core CSS-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Custom styles -->
+    <link href="/css/manage/admin.css" rel="stylesheet" />
+    <style>
+        body {
+            padding-top: 4.5rem;
+        }
+        .main {
+            padding: 20px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<header th:replace="fragments/manageHeader :: manageHeader"></header>
+
+<!-- content -->
+<div class="container">
+    <div class="main">
+        <h1 class="display-4">관리자님, 환영합니다!</h1>
+        <p class="lead">여기는 관리자 권한을 가진 분들만 접근할 수 있는 페이지입니다.</p>
+
+
+    </div>
+</div>
+
+<!-- Footer -->
+<footer th:replace="fragments/footer :: footer"></footer>
+
+<!-- Bootstrap core JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS -->
+<script src="js/scripts.js"></script>
+
+<script>
+    function selectAll(selectAll) {
+        const checkboxes = document.getElementsByName('check');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = selectAll.checked;
+        });
+    }
+</script>
+</body>
+</html>

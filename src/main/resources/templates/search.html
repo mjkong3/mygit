@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>검색</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            var errorMessage = /*[[${errorMessage}]]*/ "";
+            if (errorMessage != null && errorMessage !== "") {
+                alert(errorMessage);
+            }
+        });
+    </script>
+</th:block>
+
+<th:block layout:fragment="css">
+    <style>
+        /* Add any additional styles here */
+    </style>
+</th:block>
+
+<div th:replace="fragments/header :: header"></div>
+
+<div th:fragment="content">
+    <div class="bestmenu">
+        <br>
+        <p>검색어 : '[[${searchWord}]]'</p>
+        <div th:if="${#lists.isEmpty(searchItems)}" style="color:red;">
+            <p>해당 상품이 없습니다</p>
+        </div>
+    </div>
+
+    <div th:if="${not #lists.isEmpty(searchItems)}">
+
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center" id="items">
+            <th:block th:each="item : ${searchItems}">
+                <div class="card">
+                    <!-- Product image-->
+                    <img th:src="${item.itemImage}" class="card-img-top" th:alt="${item.itemName}" />
+                    <!-- Product details-->
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <!-- Product name-->
+                            <h5 class="fw-bolder">[[${item.itemName}]]</h5>
+                            <p class="price">[[${item.itemPrice}]]원</p>
+                            <!-- Product reviews-->
+                            <div class="d-flex justify-content-center small text-warning mb-2">
+                                <!-- Add review stars or any other content here -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Product actions-->
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" th:href="'/item/' + ${item.itemNum}">상세보기</a></div>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+        <div th:if="${not #lists.isEmpty(searchItems)}" style="color:red;">
+
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${pageHandler.firstPage} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/search(page=${pageHandler.beginPage - 1}, searchWord=${searchWord})}"
+                           aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <th:block th:each="i : ${#numbers.sequence(pageHandler.beginPage, pageHandler.endPage)}">
+                        <li class="page-item" th:classappend="${pageHandler.page == i} ? 'active'">
+                            <a class="page-link"
+                               th:href="@{/search(page=${i}, searchWord=${searchWord})}">[[${i}]]</a>
+                        </li>
+                    </th:block>
+                    <li class="page-item" th:classappend="${pageHandler.lastPage} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/search(page=${pageHandler.endPage + 1}, searchWord=${searchWord})}"
+                           aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</html>

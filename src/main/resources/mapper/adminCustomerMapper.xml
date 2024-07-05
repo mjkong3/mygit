@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.admin.mapper.AdminCustomerMapper">
+
+    <!-- 유저 조회 -->
+    <select id="custListAll" resultType="adminCustomerDto">
+        SELECT *
+        FROM customer
+        WHERE ROLE = 'user';
+    </select>
+
+    <!-- 유저 삭제 -->
+    <delete id="deleteCust" parameterType="int">
+        DELETE FROM customer
+        WHERE cust_num = #{custNum}
+    </delete>
+
+    <!-- 유저 검색 -->
+    <select id="searchCustomer" parameterType="map" resultType="adminCustomerDto">
+        SELECT cust_num, cust_name, cust_id, cust_tel, total_price, grade
+        FROM customer
+        WHERE ROLE = 'user'
+        <if test="gradeName != null and gradeName != ''">
+            AND grade = #{gradeName}
+        </if>
+        <if test="searchField == 'custId'">
+            AND cust_id LIKE CONCAT('%', #{searchValue}, '%')
+        </if>
+        <if test="searchField == 'custName'">
+            AND cust_name LIKE CONCAT('%', #{searchValue}, '%')
+        </if>
+        <if test="searchField == 'custTel'">
+            AND cust_tel LIKE CONCAT('%', #{searchValue}, '%')
+        </if>
+        ORDER BY cust_num DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="searchCustomerCount" parameterType="map" resultType="int">
+        SELECT count(*)
+        FROM customer
+        WHERE ROLE = 'user'
+        <if test="gradeName != null and gradeName != ''">
+            AND grade = #{gradeName}
+        </if>
+        <if test="searchField == 'custId'">
+            AND cust_id LIKE CONCAT('%', #{searchValue}, '%')
+        </if>
+        <if test="searchField == 'custName'">
+            AND cust_name LIKE CONCAT('%', #{searchValue}, '%')
+        </if>
+        <if test="searchField == 'custTel'">
+            AND cust_tel LIKE CONCAT('%', #{searchValue}, '%')
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.pet.customer.mapper.CustomerMapper">
+    <insert id="insertCust" parameterType="customerDto" useGeneratedKeys="true" keyProperty="custNum" keyColumn="cust_num">
+        INSERT INTO customer(cust_id, cust_pw, cust_name, cust_tel, Role)
+        VALUES(#{custId}, #{custPw}, #{custName}, #{custTel}, #{role})
+    </insert>
+
+    <!-- 중복 아이디 검색 -->
+    <select id="overlapId" resultType="customerDto" parameterType="String">
+        SELECT cust_num, cust_id, cust_tel
+        FROM customer
+        WHERE cust_id=#{custId}
+    </select>
+
+
+    <!-- 중복 전화번호 검색 -->
+    <select id="overlapTel" resultType="customerDto" parameterType="String">
+        SELECT cust_num, cust_id, cust_tel
+        FROM customer
+        WHERE cust_tel=#{custTel}
+    </select>
+
+    <select id="loginCustomer" resultType="customerDto" parameterType="String">
+        SELECT cust_num, cust_name, cust_id, cust_pw, cust_tel, total_price, grade, Role
+        FROM customer
+        WHERE cust_id=#{custId}
+    </select>
+
+    <select id="longinId" parameterType="string" resultType="customerDto">
+        SELECT *
+        FROM customer
+        WHERE cust_id=#{custId}
+    </select>
+
+    <update id="updateTP" parameterType="map">
+        UPDATE customer
+        SET total_price = #{totalPrice}
+        WHERE cust_num = #{custNum}
+    </update>
+
+
+    <select id="custTotalPrice" parameterType="Long" resultType="CustomerTotalPriceDto">
+        SELECT c.cust_num, c.cust_name, c.cust_id, c.total_price, od.order_detail_num, o.order_num, od.item_num, od.item_cnt, od.price
+        FROM customer c JOIN `order` o
+        ON c.cust_num = o.cust_num JOIN orders_detail od
+        ON o.order_num = od.order_num
+        WHERE od.order_detail_num = #{orderDetailNum}
+    </select>
+
+    <select id="selectCustomer" parameterType="Long">
+        SELECT *
+        FROM customer
+        WHERE cust_num = #{custNum}
+    </select>
+
+</mapper>

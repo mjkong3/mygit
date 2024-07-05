@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.pet.notice.mapper.NoticeMapper">
+
+    <!-- 공지사항 전체 목록 (페이징 처리)-->
+    <select id="listNTAll" parameterType="map" resultType="noticeDto">
+        SELECT notice_num, notice_title, notice_date, notice_content, hit
+        FROM notice
+        ORDER BY notice_num DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="listNTAllCount" resultType="int">
+        SELECT count(*)
+        FROM notice
+    </select>
+
+
+    <!-- 공지사항 추가 -->
+    <insert id="insertNT" parameterType="noticeDto" useGeneratedKeys="true"
+            keyProperty="noticeNum" keyColumn="notice_num">
+        INSERT INTO notice(notice_title, notice_content)
+        VALUES(#{noticeTitle}, #{noticeContent})
+    </insert>
+
+
+    <!-- 공지 검색 -->
+    <select id="selectNT" parameterType="int" resultType="noticeDto">
+        SELECT notice_num, notice_title, notice_date, notice_content, hit
+        FROM notice
+        WHERE notice_num = #{noticeNum}
+    </select>
+
+
+    <!-- 공지사항 삭제 -->
+    <delete id="deleteNT" parameterType="int">
+        DELETE FROM notice
+        WHERE notice_num = #{noticeNum}
+    </delete>
+
+
+    <!-- 공지사항 수정 -->
+    <update id="updateNT" parameterType="map">
+        UPDATE notice
+        SET notice_title = #{noticeTitle},
+            notice_content = #{noticeContent}
+        WHERE notice_num = #{noticeNum};
+    </update>
+
+
+</mapper>

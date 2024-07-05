@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.pet.review.mapper.ReviewMapper">
+
+    <!-- 리뷰 전체 목록 (페이징처리) -->
+    <select id="listRVAll" parameterType="map" resultType="reviewDto">
+        SELECT review_num, i.item_name, c.cust_name, review_title, review_date, review_content, review_img
+        FROM review r, item i, customer c
+        WHERE r.item_num = i.item_num AND r.cust_num = c.cust_num
+        ORDER BY review_num DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="listRVAllCount" resultType="int">
+        SELECT count(*)
+        FROM review
+    </select>
+
+    <select id="findRV" parameterType="Long" resultType="reviewDto">
+        SELECT *
+        FROM review
+        WHERE order_detail_num = #{order_detail_num}
+    </select>
+
+    <!-- 리뷰 정보 검색 -->
+    <select id="selectRVInfo" parameterType="int" resultType="reviewDto">
+        SELECT r.review_num, i.item_name, c.cust_name, c.cust_num, r.review_title, r.review_date, r.review_content, r.review_img
+        FROM review r, item i, customer c
+        WHERE review_num = #{reviewNum} AND r.item_num = i.item_num AND r.cust_num = c.cust_num
+    </select>
+
+
+
+    <!-- 리뷰 추가 -->
+    <insert id="insertRV" parameterType="reviewDto" useGeneratedKeys="true" keyProperty="reviewNum" keyColumn="review_num">
+        INSERT INTO review(review_title, order_detail_num, review_content, review_img, item_num, cust_num)
+        VALUES(#{reviewTitle}, #{orderDetailNum}, #{reviewContent}, #{reviewImg}, #{itemNum}, #{custNum})
+    </insert>
+
+    <!-- 리뷰 삭제 -->
+    <delete id="deleteRV" parameterType="int">
+        DELETE FROM review
+        WHERE review_num = #{reviewNum}
+    </delete>
+
+</mapper>

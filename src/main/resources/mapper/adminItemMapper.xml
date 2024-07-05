@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.admin.mapper.AdminItemMapper">
+
+    <!-- 제품 등록 -->
+    <insert id="insertItem" parameterType="adminItemDto" useGeneratedKeys="true" keyProperty="itemNum" keyColumn="item_num">
+        INSERT INTO item(category_name, item_name, item_price, item_cnt, item_image, item_info)
+        VALUES (#{categoryName}, #{itemName}, #{itemPrice}, #{itemCnt}, #{itemImage}, #{itemInfo})
+    </insert>
+
+    <!-- 제품 전체 조회 -->
+    <select id="itemListAll" resultType="adminItemDto">
+        SELECT item_num, category_name, item_name, item_price, item_cnt, item_image, item_info
+        FROM item;
+    </select>
+
+    <!-- 제품 삭제 -->
+    <delete id="deleteItem" parameterType="int">
+        DELETE FROM item
+        WHERE item_num = #{itemNum}
+    </delete>
+
+    <!-- 제품 검색 -->
+    <select id="searchItems" parameterType="map" resultType="adminItemDto">
+        SELECT item_num, category_name, item_name, item_price, item_cnt, item_image, item_info
+        FROM item
+        WHERE 1=1
+        <if test="searchField != null and searchValue != null">
+            AND ${searchField} LIKE CONCAT('%', #{searchValue}, '%')
+        </if>
+        <if test="categoryName != null and categoryName != ''">
+            AND category_name = #{categoryName}
+        </if>
+        <if test="minStock != null">
+            AND item_cnt &gt;= #{minStock}
+        </if>
+        <if test="maxStock != null">
+            AND item_cnt &lt;= #{maxStock}
+        </if>
+        <if test="minPrice != null">
+            AND item_price &gt;= #{minPrice}
+        </if>
+        <if test="maxPrice != null">
+            AND item_price &lt;= #{maxPrice}
+        </if>
+        ORDER BY item_num DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="searchItemsCount" parameterType="map" resultType="int">
+        SELECT count(*)
+        FROM item
+        WHERE 1=1
+        <if test="searchField != null and searchValue != null">
+            AND ${searchField} LIKE CONCAT('%', #{searchValue}, '%')
+        </if>
+        <if test="categoryName != null and categoryName != ''">
+            AND category_name = #{categoryName}
+        </if>
+        <if test="minStock != null">
+            AND item_cnt &gt;= #{minStock}
+        </if>
+        <if test="maxStock != null">
+            AND item_cnt &lt;= #{maxStock}
+        </if>
+        <if test="minPrice != null">
+            AND item_price &gt;= #{minPrice}
+        </if>
+        <if test="maxPrice != null">
+            AND item_price &lt;= #{maxPrice}
+        </if>
+    </select>
+
+
+</mapper>

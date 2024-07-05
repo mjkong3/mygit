@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.admin.mapper.AdminCategoryMapper">
+
+    <!-- 카테고리 생성 -->
+    <insert id="createCategory">
+        INSERT INTO category(category_name)
+        VALUES (#{categoryName});
+    </insert>
+
+    <!-- 카테고리 조회 -->
+    <select id="allCategory" parameterType="map" resultType="categoryDto">
+        SELECT category_name
+        FROM category
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="allCategoryCount" resultType="int">
+        SELECT count(*)
+        FROM category
+    </select>
+
+    <!-- 카테고리 삭제 -->
+    <delete id="deleteCategory" parameterType="String" >
+        DELETE FROM category
+        WHERE category_name = #{categoryName}
+    </delete>
+
+    <!-- 카테고리 수정 -->
+    <update id="updateCategory">
+        UPDATE category
+        SET category_name = #{newCategoryName}
+        WHERE category_name = #{oldCategoryName}
+    </update>
+</mapper>

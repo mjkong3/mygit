@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오마이댕_계산하기</title>
+    <link rel="stylesheet" href="./css/pay.css">
+
+</head>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+         var successMessage = [[${successMessage}]];
+
+         if (errorMessage) {
+             alert(errorMessage);
+             location.href = "/shoppingbasket";
+         } else if (successMessage) {
+             alert(successMessage);
+             location.href = "/myPage";
+         }
+
+         document.addEventListener('DOMContentLoaded', function() {
+             let form = document.querySelector('#order-form');
+
+             form.addEventListener('submit', function(event) {
+                 if (!checkAllFieldsFilled() || !validateForm()) {
+                     event.preventDefault();
+                 }
+             });
+
+             let name = document.querySelector("#custName");
+             let tel = document.querySelector("#custTel");
+             let add = document.querySelector("#address");
+
+             let namePattern = /^[가-힣]+$/;
+
+             function checkAllFieldsFilled() {
+                 if (name.value.trim() === '' || tel.value.trim() === '' ||
+                  add.value.trim() === '') {
+                     alert("모든 항목을 입력해주세요.");
+                     return false;
+                 }
+                 return true;
+             }
+
+             function validateForm() {
+                 let isValid = true;
+
+                 if (!checkName()) {
+                     isValid = false;
+                 } else if (!checkTel()) {
+                     isValid = false;
+                 } else if (!checkAddress()) {
+                     isValid = false;
+                 }
+                 return isValid;
+             }
+
+             function checkAddress() {
+                 let addValue = add.value.trim();
+                 if (addValue.length === 0) {
+                     return false;
+                 } else if (!/^[가-힣\s]+$/.test(addValue)) {
+                     alert("정확한 주소를 입력하세요.");
+                     add.select();
+                     return false; /
+                 }
+                 return true;
+             }
+
+             function checkName() {
+                 let nameValue = name.value.trim();
+                 if (nameValue.length === 0) {
+                     return false;
+                 } else if (!namePattern.test(nameValue)) {
+                     alert("이름은 한글로만 입력하세요.");
+                     name.select();
+                     return false;
+                 }
+                 return true;
+             }
+
+             function checkTel() {
+                 let telValue = tel.value.trim();
+                 if (telValue.length === 0) {
+                     return true;
+                 } else if (!/^\d{3}-\d{4}-\d{4}$/.test(telValue)) {
+                     alert("잘못된 전화번호 형식입니다. ex) 010-1234-5678");
+                     tel.select();
+                     return false;
+                 }
+                 return true;
+             }
+         });
+    </script>
+</th:block>
+<th:block layout:fragment="css">
+    <style>
+        .itemInfo{
+            margin: auto;
+            display: flex;
+            border: 1px;
+        }
+        .itemImg{
+            height: 150px;
+        }
+    </style>
+</th:block>
+
+<div th:replace="fragments/header :: header"></div>
+
+<div th:fragment="content">
+
+
+    <div id="container">
+        <form name="order" method="post" id="order-form" action="/order">
+            <fieldset>
+                <center>
+                    <legend>상품 정보</legend>
+                    <p class="border"/>
+                    <ul th:each="item : ${list}" class="itemInfo">
+                        <li>
+                            <img class="itemImg" th:src="${item.itemImage}" alt="상품 이미지" src="">
+                        </li>
+                        <li>
+                            <p id="cate" class="cate" th:text="${item.itemName}">상품 이름</p>
+                            <p id="price" class="price" th:text="${item.itemPrice}">상품 가격</p>
+                            <p id="count" class="count" th:text="'개수 : ' + ${item.count} + '개'">개수</p>
+
+                        </li>
+                        <li>
+                            <input type="hidden" th:value="${item.cartItemNum}" name="cartItemNum">
+                        </li>
+                    </ul>
+                    <p class="border"/>
+                    <legend>배송지</legend>
+                </center>
+                <table class="info">
+                    <tr>
+                        <td>
+                            <label class="field" for="custName">이름: </label>
+                        </td>
+                        <td>
+                            <input type="text" class="input-box" id="custName" name="custName">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="field" for="custTel">연락처: </label>
+                        </td>
+                        <td>
+                            <input type="text" class="input-box" id="custTel" name="custTel">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="field" for="address">주소: </label>
+                        </td>
+                        <td>
+                            <input type="text" class="input-box" id="address" name="address">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="field" for="orderReq">요청사항: </label>
+                        </td>
+                        <td>
+                            <input type="text" class="input-box" id="orderReq" name="orderReq" placeholder="조심히 천천히 와주세요">
+                        </td>
+                    </tr>
+                </table>
+                <p th:if="${errorMessage}" style="color: red; text-align: center; font-weight: bold;" th:text="${errorMessage}"></p>
+                <p th:if="${successMessage}" th:text="${successMessage}"></p>
+            </fieldset>
+            <button type="submit" class="order">결제하기</button>
+        </form>
+    </div>
+</div>
+
+<!-- footer -->
+<div th:replace="fragments/footer :: footer"></div>
+
+
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<script src="js/scripts.js"></script>
+
+</html>

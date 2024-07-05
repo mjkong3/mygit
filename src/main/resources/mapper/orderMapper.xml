@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.pet.order.mapper.OrderMapper">
+
+    <!-- 주문  -->
+    <insert id="insertOrder" parameterType="orderDto"  useGeneratedKeys="true"
+            keyProperty="orderNum" keyColumn="order_num">
+        INSERT INTO `order`(cust_num, address, order_req)
+        VALUES( #{custNum}, #{address}, #{orderReq})
+    </insert>
+
+    <!-- 주문 세부사항 -->
+    <insert id="insertDetail" parameterType="orderDetailDto" useGeneratedKeys="true"
+            keyProperty="orderDetailNum" keyColumn="order_detail_num">
+        INSERT INTO orders_detail (order_num, item_num, item_cnt, price, order_status)
+        VALUES ( #{orderNum}, #{itemNum}, #{itemCnt}, #{price}, #{orderStatus})
+    </insert>
+
+    <select id="selectOrder" parameterType="Long">
+        SELECT *
+        FROM `order`
+        WHERE cust_num = #{custNum}
+    </select>
+
+    <select id="customerOrder" parameterType="Long" resultType="orderDetailDto">
+        SELECT *
+        FROM `order_detail`
+        WHERE cust_num = #{custNum}
+        ORDER BY order_detail_num DESC
+    </select>
+
+    <select id="findOrderItem" parameterType="Long" resultType="OrderDetailDto">
+        SELECT *
+        FROM orders_detail
+        WHERE order_detail_num = #{orderDetailNum}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>오마이댕 - 관리자페이지 (상품등록)</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="/css/manage/addProduct.css" rel="stylesheet" />
+</head>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        let errorMessage = [[${errorMessage}]];
+        if(errorMessage){
+            alert(errorMessage);
+        }
+    </script>
+</th:block>
+<div th:replace="fragments/manageHeader :: manageHeader"></div>
+
+<div class="product">
+    <h2>전체 상품관리</h2>
+    <form class="productAdd" method="post" th:action="@{/addProductAdd}" enctype="multipart/form-data" th:object="${product}">
+        <h4>상품추가</h4>
+        <table class="search">
+            <tr>
+                <th scope="row">제품명</th>
+                <td>
+                    <input type="text" name="itemName" size="30" th:field="*{itemName}">
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">카테고리</th>
+                <td>
+                    <select name="categoryName" th:field="*{categoryName}">
+                        <option value="categoryAll">카테고리</option>
+                        <option th:each="category : ${category}" th:value="${category.categoryName}" th:text="${category.categoryName}" th:field="*{categoryName}"></option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">상품재고</th>
+                <td>
+                    <input type="text" name="count" value="" class="" th:field="*{count}"> 개
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">상품가격</th>
+                <td>
+                    <input type="text" name="price" value="" class="" th:field="*{price}"> 원
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">이미지</th>
+                <td>
+                    <input type="file" class="custom-file-input" name="itemImgFile" th:field="*{itemImgFile}">
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">상품상세설명</th>
+                <td>
+                    <textarea rows="8" cols="40" name="itemDetail" th:field="*{itemDetail}"></textarea>
+                </td>
+            </tr>
+        </table>
+        <p th:if="${errorMessage}" style="color: red; text-align: center;" th:text="${errorMessage}"></p>
+        <div class="btn">
+            <input type="submit" value="상품등록">
+            <input type="reset" value="초기화">
+        </div>
+    </form>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+
+</body>
+</html>

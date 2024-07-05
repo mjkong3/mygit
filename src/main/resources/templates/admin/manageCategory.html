@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>오마이댕 - 관리자페이지 (상품등록)</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="/css/manage/manageCategory.css" rel="stylesheet" />
+</head>
+<body>
+<!-- header -->
+<div th:replace="fragments/manageHeader :: manageHeader"></div>
+
+<div class="category">
+    <h2>카테고리 관리</h2>
+    <div>
+        <h4>카테고리 등록</h4>
+        <form action="/manageCategory" method="post" class="addCategory">
+            <table>
+                <tr>
+                    <th scope="row">카테고리명</th>
+                    <td><input type="text" name="categoryName" placeholder="" /></td>
+                </tr>
+            </table>
+            <div class="btn">
+                <input type="submit" value="추가">
+            </div>
+            <div th:if="${errorMessage}" style="color: red; text-align: center;" th:text="${errorMessage}"></div>
+        </form>
+    </div>
+    <div>
+        <table class="search_table">
+            <thead class="list">
+            <tr>
+                <th scope="col">번호</th>
+                <th scope="col">카테고리명</th>
+                <th scope="col">카테고리 삭제</th>
+            </tr>
+            </thead>
+            <tbody class="list">
+            <tr th:each="category, iterStat : ${category}">
+                <td scope="col" th:text="${iterStat.count}"></td>
+                <td scope="col" th:text="${category.categoryName}" th:name="${category.categoryName}"></td>
+                <td scope="col">
+                    <button type="button" class="close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    <!-- 페이징 네비게이션 -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${pageHandler.firstPage} ? 'disabled'">
+                <a class="page-link" th:href="@{/manageCategory} + '?page=' + ${pageHandler.beginPage - 1} + '&pageSize=' + ${pageHandler.pageSize}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <th:block th:each="i : ${#numbers.sequence(pageHandler.beginPage, pageHandler.endPage)}">
+                <li class="page-item" th:classappend="${pageHandler.page == i} ? 'active'">
+                    <a class="page-link" th:href="@{/manageCategory} + '?page=' + ${i} + '&pageSize=' + ${pageHandler.pageSize}">[[${i}]]</a>
+                </li>
+            </th:block>
+            <li class="page-item" th:classappend="${pageHandler.lastPage} ? 'disabled'">
+                <a class="page-link" th:href="@{/manageCategory} + '?page=' + ${pageHandler.endPage + 1} + '&pageSize=' + ${pageHandler.pageSize}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<!-- footer -->
+<div th:replace="fragments/footer :: footer"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.close').forEach(button => {
+        button.addEventListener('click', function() {
+            const categoryName = this.closest('tr').querySelector('td[name]').getAttribute('name');
+
+            if (confirm('정말로 삭제하시겠습니까?')) {
+                fetch('/deleteCategory', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        'categoryName': categoryName
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('삭제 실패');
+                    }
+                })
+                .catch(error => {
+                    alert('삭제 중 오류 발생');
+                });
+            }
+        });
+    });
+});
+
+
+</script>
+
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<script src="js/scripts.js"></script>
+</body>
+</html>
